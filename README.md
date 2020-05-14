@@ -13,7 +13,7 @@ Manage a library of objects for use in pybullet physics
 
 ## Usage
 ### Set up YCB objects
-1. Download the **16k laser scan** from the YCB Benchmarks website(http://ycb-benchmarks.s3-website-us-east-1.amazonaws.com/).
+1. Download the **16k laser scan** from the [YCB Benchmarks website](http://ycb-benchmarks.s3-website-us-east-1.amazonaws.com/).
 2. Unzip the folder. You'll now be able to find several files, some of which we use
     - Files named **textured** include both object geometry and texture maps.
     - Files named **nontextured** include only object geometry.
