@@ -1,0 +1,5 @@
+<overrides>
+	<color rgba="0.0 1.0 0.0 1.0" />
+	<origin rpy="1.57 0 0" xyz="0 0 0" />
+	<mesh scale="0.01 0.01 0.01" />
+</overrides>

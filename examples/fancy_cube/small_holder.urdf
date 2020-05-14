@@ -1,0 +1,23 @@
+<robot name="small_holder">
+	<link name="small_holder">
+		<visual>
+			<origin rpy="1.57 0 0" xyz="0 0 0" />
+			<geometry>
+				<mesh filename="small_holder/holder.obj" scale="0.01 0.01 0.01" />
+			</geometry>
+			<material name="texture">
+				<color rgba="0.0 1.0 0.0 1.0" />
+			</material>
+		</visual>
+		<collision>
+			<origin rpy="1.57 0 0" xyz="0 0 0" />
+			<geometry>
+				<mesh filename="small_holder/holder_vhacd.obj" scale="0.01 0.01 0.01" />
+			</geometry>
+		</collision>
+		<inertial>
+			<mass value="1.0" />
+			<inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+		</inertial>
+	</link>
+</robot>
