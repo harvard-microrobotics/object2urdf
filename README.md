@@ -3,7 +3,7 @@ Manage a library of objects for use in pybullet physics
 
 ## Installation
 ### Install the release version
-[This package will eventually be on pypi](https://pypi.org/project/object2urdf/), so anyone can install it with pip: `pip install object2urdf`
+[This package is available on pypi](https://pypi.org/project/object2urdf/), so anyone can install it with pip: `pip install object2urdf`
 
 ### Install the most-recent development version
 1. Clone the package from the [github repo](https://github.com/cbteeple/object2urdf)

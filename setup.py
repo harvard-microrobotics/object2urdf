@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='object2urdf',
-    version='0.1',
+    version='0.3',
     packages=find_packages(exclude=['tests*']),
     license='MIT',
     description='Manage URDF files for a library of objects',
