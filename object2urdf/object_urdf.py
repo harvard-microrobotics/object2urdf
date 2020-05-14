@@ -141,10 +141,3 @@ class ObjectUrdfBuilder:
         for root, _, full_file in stl_files:
             if root not in obj_folders:
                 self.build_urdf(full_file,**kwargs)
-        
-
-
-if __name__ == '__main__':
-    object_folder = "../examples/objects"
-    builder = ObjectUrdfBuilder(object_folder)
-    builder.build_library(force_overwrite=True, decompose_concave=True, force_decompose=False)

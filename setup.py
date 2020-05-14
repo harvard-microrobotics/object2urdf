@@ -9,7 +9,7 @@ setup(
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
     install_requires=['numpy','pybullet'],
-    url='https://github.com/cbteeple/object_urdf',
+    url='https://github.com/cbteeple/object2urdf',
     author='Clark Teeple',
     author_email='cbteeple@gmail.com',
 )
