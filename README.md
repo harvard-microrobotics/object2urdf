@@ -33,7 +33,7 @@ Manage a library of objects for use in pybullet physics
     - **.MTL** files usually refer to an image texture (**jpg** or **png**) that gets mapped onto the object.
 
 
-## Auto-generate URDFs
+### Auto-generate URDFs
 1. Set up your file structure per the instructions for custom objects above.
     - Each object set directory must have its own `_prototype.urdf` template file. This is where default units, colors, and masses are adjusted.
     - If objects are buried in sub-subdirectories within each object's directory, this utility will still find them. However, _only one URDF is generated from each object directory._
