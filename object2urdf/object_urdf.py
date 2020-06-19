@@ -142,15 +142,7 @@ class ObjectUrdfBuilder:
 
             rot = Rotation.from_euler('xyz',rpy)
             rot_matrix = rot.as_matrix()
-            print('COM:')
-            print(mass_center)
-            print(np.vstack(np.array(mass_center)))
             mass_center = np.matmul(rot_matrix, np.vstack(np.asarray(mass_center))).squeeze()
-
-            print(rpy)
-            print(rot_matrix)
-            print(mass_center)
-
 
 
             self.replace_urdf_attributes(new_urdf,
@@ -232,6 +224,8 @@ class ObjectUrdfBuilder:
 
     # Build the URDFs for all objects in your library.
     def build_library(self, **kwargs):
+        print("\nFOLDER: %s"%(self.object_folder))
+
         # Get all OBJ files
         obj_files  = self._get_files_recursively(self.object_folder, filter_extension='.obj', exclude_suffix=self.suffix)
         stl_files  = self._get_files_recursively(self.object_folder, filter_extension='.stl', exclude_suffix=self.suffix)       
@@ -240,7 +234,15 @@ class ObjectUrdfBuilder:
         for root, _, full_file in obj_files:
             obj_folders.append(root)
             self.build_urdf(full_file,**kwargs)
+
+            common = os.path.commonprefix([self.object_folder,full_file])
+            rel = os.path.join(full_file.replace(common,''))
+            print('\tBuilding: %s'%(rel) )
         
         for root, _, full_file in stl_files:
             if root not in obj_folders:
                 self.build_urdf(full_file,**kwargs)
+                
+                common = os.path.commonprefix([self.object_folder,full_file])
+                rel = os.path.join(full_file.replace(common,''))
+                print('Building: %s'%(rel) )
