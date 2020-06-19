@@ -48,7 +48,6 @@ class ObjectUrdfBuilder:
         new_urdf = copy.deepcopy(self.urdf_base)
         self.replace_urdf_attribute(new_urdf,'.//visual/geometry/mesh', 'filename', object_file)
         self.replace_urdf_attribute(new_urdf,'.//collision/geometry/mesh', 'filename', collision_file)
-        self.replace_urdf_attribute(new_urdf,'.//link', 'name', object_name)
         new_urdf.attrib['name']= object_name
 
         # Update the inertias
