@@ -1,4 +1,6 @@
 import pybullet as p
+from scipy.spatial.transform import Rotation
+import numpy as np
 import os
 import copy
 import trimesh
@@ -114,18 +116,49 @@ class ObjectUrdfBuilder:
 
         # Output the center of mass if provided
         if mass_center is not None:
+            # Check if there's a geometry offset
+            offset_ob = new_urdf.find('.//collision/origin')
+            if offset_ob is not None:
+                offset_str = offset_ob.attrib.get('xyz', '0 0 0')
+                rot_str = offset_ob.attrib.get('rpy', '0 0 0')
+                offset = self._str2list(offset_str)
+                rpy = self._str2list(rot_str)
+            else:
+                offset = [0, 0, 0]
+                rpy = [0, 0, 0]
+
 
             # Check if there's a scale factor and apply it
             scale_ob = new_urdf.find('.//collision/geometry/mesh')
-            scale_str = scale_ob.attrib.get('scale', '1 1 1')
-            scale = self._str2list(scale_str)
+            if scale_ob is not None:
+                scale_str = scale_ob.attrib.get('scale', '1 1 1')
+                scale = self._str2list(scale_str)
+            else:
+                scale = [1, 1, 1]
+
 
             for idx,axis in enumerate(mass_center):
-                mass_center[idx] = mass_center[idx]*scale[idx]
+                mass_center[idx] = -mass_center[idx]*scale[idx] + offset[idx]
+
+            rot = Rotation.from_euler('xyz',rpy)
+            rot_matrix = rot.as_matrix()
+            print('COM:')
+            print(mass_center)
+            print(np.vstack(np.array(mass_center)))
+            mass_center = np.matmul(rot_matrix, np.vstack(np.asarray(mass_center))).squeeze()
+
+            print(rpy)
+            print(rot_matrix)
+            print(mass_center)
+
+
 
             self.replace_urdf_attributes(new_urdf,
-                    './/inertial/origin',
-                    {'xyz': self._list2str(mass_center), 'rpy':"0 0 0"})
+                    './/visual/origin',
+                    {'xyz': self._list2str(mass_center), 'rpy': self._list2str(rpy)})
+            self.replace_urdf_attributes(new_urdf,
+                    './/collision/origin',
+                    {'xyz': self._list2str(mass_center), 'rpy': self._list2str(rpy)})
 
 
 
