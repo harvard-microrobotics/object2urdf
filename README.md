@@ -45,6 +45,7 @@ Manage a library of objects for use in pybullet physics
     - Start with the "**build_object_library.py**" example.
     - This example will place all URDFs into their respective object set directories, but you can change the output location by passing the `output_folder` argument to `build_urdf` or `build_library`
     - Due to limitations of Bullet's rigid body collision detection, concave objects must be split into several convex objects using a convex decomposition. You can do this with the `ObjectUrdfBuilder` class by passing `decompose_concave=True` to the `build_urdf` or `build_library` functions. The URDF builder will then generate a decomposed file, place it next to the original object file, and link to it as the collision geometry in the object's URDF.
+    - By default, this package uses [trimesh](https://github.com/mikedh/trimesh) to calculate the center of mass of objects from thier geometry. To turn this behavir off and use the URDF or ORV files, pass `calculate_mass_center = False` to the `build_urdf` or `build_library` functions
 
 ### Use objects in simulation
 Just import the object's URDF:

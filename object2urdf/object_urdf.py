@@ -1,6 +1,7 @@
 import pybullet as p
 import os
 import copy
+import trimesh
 
 import xml.etree.ElementTree as ET
 
@@ -17,7 +18,7 @@ class ObjectUrdfBuilder:
 
 
     # Recursively get all files with a specific extension, excluding a certain suffix
-    def get_files_recursively(self,start_directory, filter_extension=None, exclude_suffix=None):
+    def _get_files_recursively(self,start_directory, filter_extension=None, exclude_suffix=None):
         for root, dirs, files in os.walk(start_directory):
             for file in files:
                 if filter_extension is None or file.lower().endswith(filter_extension):
@@ -32,14 +33,56 @@ class ObjectUrdfBuilder:
         return root
 
 
+    # Convert a list to a space-separated string
+    def _list2str(self, in_list):
+        out= ""
+        for el in in_list:
+            out += str(el)+" "
+        return out[:-1]
+
+
+    # Convert a space-separated string to a list
+    def _str2list(self, in_str):
+        out = in_str.split(' ')
+        out = [float(el) for el in out]
+        return out
+
+
+    # Find the center of mass of the object
+    def get_center_of_mass(self, filename):
+        mesh = trimesh.load(filename)
+        return mesh.center_mass
+
+
     # Replace an attribute in a feild of a URDF
     def replace_urdf_attribute(self, urdf, feild, attribute, value):
-        urdf.find(feild).attrib[attribute] = value
+        urdf = self.replace_urdf_attributes(urdf, feild, {attribute: value})
         return urdf
+
+
+    # Replace several attributes in a feild of a URDF
+    def replace_urdf_attributes(self, urdf, feild, attribute_dict, sub_feild=None):
+
+        if sub_feild is None:
+            sub_feild = []
+
+        field_obj = urdf.find(feild)
+
+        if field_obj is not None:
+            if len(sub_feild) > 0:
+                for child in reversed(sub_feild):
+                    field_obj = ET.SubElement(field_obj,child)
+            field_obj.attrib.update(attribute_dict)
+            #field_obj.attrib = attribute_dict
+        else:
+            feilds = feild.split("/")
+            new_feild="/".join(feilds[0:-1])
+            sub_feild.append(feilds[-1])
+            self.replace_urdf_attributes(urdf, new_feild, attribute_dict,sub_feild)
         
 
     # Make an updated copy of the URDF for the current object
-    def update_urdf(self, object_file, object_name, collision_file=None, override=None):
+    def update_urdf(self, object_file, object_name, collision_file=None, override=None, mass_center=None):
         # If no separate collision geometry is provided, use the object file
         if collision_file is None:
             collision_file = object_file
@@ -50,7 +93,7 @@ class ObjectUrdfBuilder:
         self.replace_urdf_attribute(new_urdf,'.//collision/geometry/mesh', 'filename', collision_file)
         new_urdf.attrib['name']= object_name
 
-        # Update the inertias
+        # Update the overrides
         if override is not None:
             for orverride_el in override:
                 # Update attributes
@@ -68,6 +111,23 @@ class ObjectUrdfBuilder:
                             out_el.remove(el)
                     # Add updated feilds
                     out_el.extend(orverride_el)
+
+        # Output the center of mass if provided
+        if mass_center is not None:
+
+            # Check if there's a scale factor and apply it
+            scale_ob = new_urdf.find('.//collision/geometry/mesh')
+            scale_str = scale_ob.attrib.get('scale', '1 1 1')
+            scale = self._str2list(scale_str)
+
+            for idx,axis in enumerate(mass_center):
+                mass_center[idx] = mass_center[idx]*scale[idx]
+
+            self.replace_urdf_attributes(new_urdf,
+                    './/inertial/origin',
+                    {'xyz': self._list2str(mass_center), 'rpy':"0 0 0"})
+
+
 
         return new_urdf
 
@@ -87,7 +147,9 @@ class ObjectUrdfBuilder:
 
 
     # Build a URDF from an object file
-    def build_urdf(self, filename, output_folder=None, force_overwrite=False, decompose_concave=False, force_decompose=False, **kwargs):
+    def build_urdf(self, filename, output_folder=None,
+                   force_overwrite=False, decompose_concave=False, force_decompose=False, 
+                   calculate_mass_center = True, **kwargs):
 
         # If no output folder is specified, use the base object folder
         if output_folder is None:
@@ -110,6 +172,15 @@ class ObjectUrdfBuilder:
         else:
             overrides = None
 
+
+        # Calculate the center of mass
+        if calculate_mass_center:
+            mass_center = self.get_center_of_mass(filename)
+
+        else:
+            mass_center = None
+
+
         # If the user wants to run convex decomposition on concave objects, do it.
         if decompose_concave and file_extension=='.obj':
             outfile=filename.replace(file_extension,'_'+self.suffix+file_extension)
@@ -119,9 +190,9 @@ class ObjectUrdfBuilder:
             if not os.path.exists(outfile) or force_decompose:
                 p.vhacd(filename, outfile, self.log_file, **kwargs)
 
-            urdf_out = self.update_urdf(rel, name, collision_file=collision_file, override=overrides)
+            urdf_out = self.update_urdf(rel, name, collision_file=collision_file, override=overrides, mass_center=mass_center)
         else:
-            urdf_out = self.update_urdf(rel, name, override=overrides)
+            urdf_out = self.update_urdf(rel, name, override=overrides, mass_center=mass_center)
         
         self.save_urdf(urdf_out, name+'.urdf', force_overwrite)
 
@@ -129,8 +200,8 @@ class ObjectUrdfBuilder:
     # Build the URDFs for all objects in your library.
     def build_library(self, **kwargs):
         # Get all OBJ files
-        obj_files  = self.get_files_recursively(self.object_folder, filter_extension='.obj', exclude_suffix=self.suffix)
-        stl_files  = self.get_files_recursively(self.object_folder, filter_extension='.stl', exclude_suffix=self.suffix)       
+        obj_files  = self._get_files_recursively(self.object_folder, filter_extension='.obj', exclude_suffix=self.suffix)
+        stl_files  = self._get_files_recursively(self.object_folder, filter_extension='.stl', exclude_suffix=self.suffix)       
 
         obj_folders=[]
         for root, _, full_file in obj_files:
