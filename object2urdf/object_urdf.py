@@ -55,6 +55,14 @@ class ObjectUrdfBuilder:
         mesh = trimesh.load(filename)
         return mesh.center_mass
 
+    # Find the center of mass of the object
+    def save_to_obj(self, filename):
+        name, ext = os.path.splitext(filename)
+        obj_filename = name + '.obj'
+        mesh = trimesh.load(filename)
+        mesh.export(obj_filename)
+        return obj_filename
+
 
     # Replace an attribute in a feild of a URDF
     def replace_urdf_attribute(self, urdf, feild, attribute, value):
@@ -188,7 +196,7 @@ class ObjectUrdfBuilder:
         name= rel.split(os.path.sep)[0]
         rel = rel.replace(os.path.sep,'/')
 
-        _, file_extension = os.path.splitext(filename)
+        file_name_raw, file_extension = os.path.splitext(filename)
 
         # If an override file exists, include its data in the URDF
         override_file = filename.replace(file_extension,'.ovr')
@@ -207,15 +215,25 @@ class ObjectUrdfBuilder:
 
 
         # If the user wants to run convex decomposition on concave objects, do it.
-        if decompose_concave and file_extension=='.obj':
-            outfile=filename.replace(file_extension,'_'+self.suffix+file_extension)
-            collision_file = rel.replace(file_extension,'_'+self.suffix+file_extension)
+        if decompose_concave:
+            if file_extension == '.stl':
+                obj_filename = self.save_to_obj(filename)
+                visual_file = rel.replace(file_extension,'.obj')
+            elif file_extension == '.obj':
+                obj_filename = filename
+                visual_file  = rel
+            else:
+                raise ValueError("Your filetype needs to be an STL or OBJ to perform concave decomposition")
+
+
+            outfile=obj_filename.replace('.obj','_'+self.suffix+'.obj')
+            collision_file = visual_file.replace('.obj','_'+self.suffix+'.obj')
 
             # Only run a decomposition if one does not exist, or if the user forces an overwrite
             if not os.path.exists(outfile) or force_decompose:
-                p.vhacd(filename, outfile, self.log_file, **kwargs)
+                p.vhacd(obj_filename, outfile, self.log_file, **kwargs)
 
-            urdf_out = self.update_urdf(rel, name, collision_file=collision_file, override=overrides, mass_center=mass_center)
+            urdf_out = self.update_urdf(visual_file, name, collision_file=collision_file, override=overrides, mass_center=mass_center)
         else:
             urdf_out = self.update_urdf(rel, name, override=overrides, mass_center=mass_center)
         
