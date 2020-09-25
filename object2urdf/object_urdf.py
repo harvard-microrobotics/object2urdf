@@ -16,7 +16,6 @@ class ObjectUrdfBuilder:
         self.suffix = "vhacd"
 
         self.urdf_base = self._read_xml(os.path.join(object_folder,urdf_prototype))
-        p.connect(p.DIRECT)
 
 
     # Recursively get all files with a specific extension, excluding a certain suffix
