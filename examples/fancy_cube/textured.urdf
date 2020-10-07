@@ -1,7 +1,7 @@
 <robot name="textured">
 	<link name="_name">
 		<visual>
-			<origin rpy="0.0 0.0 0.0" xyz="1.6666664585337418e-07 4.16666562530416e-08 -2.0833330208652516e-07" />
+			<origin xyz="1.6666664585337418e-07 4.16666562530416e-08 -2.0833330208652516e-07" rpy="0.0 0.0 0.0" />
 			<geometry>
 				<mesh filename="textured/cube_tex.obj" scale="1 1 1" />
 			</geometry>
@@ -10,7 +10,7 @@
 			</material>
 		</visual>
 		<collision>
-			<origin rpy="0.0 0.0 0.0" xyz="1.6666664585337418e-07 4.16666562530416e-08 -2.0833330208652516e-07" />
+			<origin xyz="1.6666664585337418e-07 4.16666562530416e-08 -2.0833330208652516e-07" rpy="0.0 0.0 0.0" />
 			<geometry>
 				<mesh filename="textured/cube_tex_vhacd.obj" scale="1 1 1" />
 			</geometry>

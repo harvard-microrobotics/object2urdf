@@ -1,7 +1,7 @@
 <robot name="small_holder">
 	<link name="_name">
 		<visual>
-			<origin rpy="1.57 0.0 0.0" xyz="1.4891129352385525e-06 -0.00023838389256224685 -0.29876466774418015" />
+			<origin xyz="1.4891129352385525e-06 -0.00023838389256224685 -0.29876466774418015" rpy="1.57 0.0 0.0" />
 			<geometry>
 				<mesh filename="small_holder/holder.obj" scale="0.01 0.01 0.01" />
 			</geometry>
@@ -10,7 +10,7 @@
 			</material>
 		</visual>
 		<collision>
-			<origin rpy="1.57 0.0 0.0" xyz="1.4891129352385525e-06 -0.00023838389256224685 -0.29876466774418015" />
+			<origin xyz="1.4891129352385525e-06 -0.00023838389256224685 -0.29876466774418015" rpy="1.57 0.0 0.0" />
 			<geometry>
 				<mesh filename="small_holder/holder_vhacd.obj" scale="0.01 0.01 0.01" />
 			</geometry>

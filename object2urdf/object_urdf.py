@@ -1,10 +1,8 @@
-import pybullet as p
 from scipy.spatial.transform import Rotation
 import numpy as np
 import os
 import copy
 import trimesh
-
 import xml.etree.ElementTree as ET
 
 
@@ -80,6 +78,28 @@ class ObjectUrdfBuilder:
             face[0] = bounds[0][0]
 
         return face
+
+
+
+    # Do a convex decomposition
+    def do_vhacd(self, filename, outfile, debug=False, **kwargs):
+        try:
+            mesh = trimesh.load(filename)
+            convex_list = trimesh.interfaces.vhacd.convex_decomposition(mesh, debug=debug, **kwargs)
+
+            convex = trimesh.util.concatenate(convex_list)
+            convex.export(outfile)
+        except ValueError:
+            print("No direct VHACD backend available, trying pybullet")
+            pass
+
+        try:
+            import pybullet as p
+            p.vhacd(filename, outfile, self.log_file, **kwargs)
+        except ModuleNotFoundError:
+            print('\n'+"ERROR - pybullet module not found: If you want to do convex decomposisiton, make sure you install pybullet (https://pypi.org/project/pybullet) or install VHACD directly (https://github.com/mikedh/trimesh/issues/404)"+'\n')
+            raise
+
 
 
     # Find the center of mass of the object
@@ -264,7 +284,7 @@ class ObjectUrdfBuilder:
 
             # Only run a decomposition if one does not exist, or if the user forces an overwrite
             if not os.path.exists(outfile) or force_decompose:
-                p.vhacd(obj_filename, outfile, self.log_file, **kwargs)
+                self.do_vhacd(obj_filename, outfile, **kwargs)
 
             urdf_out = self.update_urdf(visual_file, name, collision_file=collision_file, override=overrides, mass_center=mass_center)
         else:

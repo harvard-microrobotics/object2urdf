@@ -1,7 +1,7 @@
 <robot name="013_apple">
 	<link name="_name">
 		<visual>
-			<origin rpy="0 0 0" xyz="-0.012204968815891608 0.03926036069089303 -0.71496" />
+			<origin xyz="-0.012204968815891608 0.03926036069089303 -0.71496" rpy="0 0 0" />
 			<geometry>
 				<mesh filename="013_apple/google_16k/textured.obj" scale="10 10 10" />
 			</geometry>
@@ -13,7 +13,7 @@
 			<geometry>
 				<mesh filename="013_apple/google_16k/textured_vhacd.obj" scale="10 10 10" />
 			</geometry>
-		<origin rpy="0 0 0" xyz="-0.012204968815891608 0.03926036069089303 -0.71496" /></collision>
+		<origin xyz="-0.012204968815891608 0.03926036069089303 -0.71496" rpy="0 0 0" /></collision>
 		<inertial>
 			<mass value="1.0" />
 			<inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
