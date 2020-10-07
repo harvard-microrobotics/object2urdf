@@ -1,7 +1,7 @@
 <robot name="053_mini_soccer_ball">
 	<link name="_name">
 		<visual>
-			<origin xyz="0.05912591400717594 -0.1153056180076441 -0.6131555334762108" rpy="0 0 0" />
+			<origin rpy="0 0 0" xyz="0.05928050493945512 -0.11485727185589065 -1.2506400000000002" />
 			<geometry>
 				<mesh filename="053_mini_soccer_ball/google_16k/textured.obj" scale="10 10 10" />
 			</geometry>
@@ -13,7 +13,7 @@
 			<geometry>
 				<mesh filename="053_mini_soccer_ball/google_16k/textured_vhacd.obj" scale="10 10 10" />
 			</geometry>
-		<origin xyz="0.05912591400717594 -0.1153056180076441 -0.6131555334762108" rpy="0 0 0" /></collision>
+		<origin rpy="0 0 0" xyz="0.05928050493945512 -0.11485727185589065 -1.2506400000000002" /></collision>
 		<inertial>
 			<mass value="1234.0" />
 		<inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
