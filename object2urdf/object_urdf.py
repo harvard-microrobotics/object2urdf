@@ -54,6 +54,35 @@ class ObjectUrdfBuilder:
         mesh = trimesh.load(filename)
         return mesh.center_mass
 
+
+    # Find the geometric center of the object
+    def get_geometric_center(self, filename):
+        mesh = trimesh.load(filename)
+        return copy.deepcopy(mesh.centroid)
+
+
+    # Get the middle of a face of the bounding box
+    def get_face(self, filename, edge):
+        mesh = trimesh.load(filename)
+        bounds = mesh.bounds
+        print(bounds)
+        face = copy.deepcopy(mesh.centroid)
+        if edge in ['top','xy_pos']:
+            face[2] = bounds[1][2]
+        elif edge in ['bottom','xy_neg']:
+            face[2] = bounds[0][2]
+        elif edge in ['xz_pos']:
+            face[1] = bounds[1][1]
+        elif edge in ['xz_neg']:
+            face[1] = bounds[0][1]
+        elif edge in ['yz_pos']:
+            face[0] = bounds[1][0]
+        elif edge in ['yz_neg']:
+            face[0] = bounds[0][0]
+
+        return face
+
+
     # Find the center of mass of the object
     def save_to_obj(self, filename):
         name, ext = os.path.splitext(filename)
@@ -181,7 +210,7 @@ class ObjectUrdfBuilder:
     # Build a URDF from an object file
     def build_urdf(self, filename, output_folder=None,
                    force_overwrite=False, decompose_concave=False, force_decompose=False, 
-                   calculate_mass_center = True, **kwargs):
+                   center = 'mass', **kwargs):
 
         # If no output folder is specified, use the base object folder
         if output_folder is None:
@@ -206,8 +235,14 @@ class ObjectUrdfBuilder:
 
 
         # Calculate the center of mass
-        if calculate_mass_center:
+        if center == 'mass':
             mass_center = self.get_center_of_mass(filename)
+
+        elif center == 'geometric':
+            mass_center = self.get_geometric_center(filename)
+
+        elif center in ['top', 'bottom', 'xy_pos', 'xy_neg','xz_pos','xz_neg','yz_pos','yz_neg']:
+            mass_center = self.get_face(filename,center)
 
         else:
             mass_center = None
