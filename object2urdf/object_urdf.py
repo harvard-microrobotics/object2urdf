@@ -65,7 +65,6 @@ class ObjectUrdfBuilder:
     def get_face(self, filename, edge):
         mesh = trimesh.load(filename)
         bounds = mesh.bounds
-        print(bounds)
         face = copy.deepcopy(mesh.centroid)
         if edge in ['top','xy_pos']:
             face[2] = bounds[1][2]
