@@ -8,7 +8,7 @@ setup(
     description='Manage URDF files for a library of objects',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
-    install_requires=['numpy', 'scipy', 'trimesh', 'pillow'],
+    install_requires=['numpy', 'scipy', 'trimesh', 'pillow', 'networkx'],
     url='https://github.com/cbteeple/object2urdf',
     author='Clark Teeple',
     author_email='cbteeple@gmail.com',

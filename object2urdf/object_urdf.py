@@ -50,7 +50,12 @@ class ObjectUrdfBuilder:
     # Find the center of mass of the object
     def get_center_of_mass(self, filename):
         mesh = trimesh.load(filename)
-        return mesh.center_mass
+        print(mesh)
+        if isinstance(mesh, trimesh.Scene):
+            print("Imported combined mesh: using centroid rather than center of mass")
+            return mesh.centroid
+        else:
+            return mesh.center_mass
 
 
     # Find the geometric center of the object
