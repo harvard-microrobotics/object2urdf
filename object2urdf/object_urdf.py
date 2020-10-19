@@ -241,6 +241,7 @@ class ObjectUrdfBuilder:
             output_folder = self.object_folder
 
         # Generate a relative path from the output folder to the geometry files
+        filename = os.path.abspath(filename)
         common = os.path.commonprefix([output_folder,filename])
         rel = os.path.join(filename.replace(common,''))
         if rel[0]==os.path.sep:

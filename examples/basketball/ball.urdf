@@ -1,0 +1,22 @@
+<robot name="ball">
+	<link name="_name">
+		<visual>
+			<origin rpy="0 0 0" xyz="0.0 -0.993855 10.0" />
+			<geometry>
+				<mesh filename="ball/basketball.obj" scale="1.0 1.0 1.0" />
+			</geometry>
+			<material name="texture">
+				<color rgba="1.0 1.0 1.0 1.0" />
+			</material>
+		</visual>
+		<collision>
+			<geometry>
+				<mesh filename="ball/basketball_vhacd.obj" scale="1.0 1.0 1.0" />
+			</geometry>
+		<origin rpy="0 0 0" xyz="0.0 -0.993855 10.0" /></collision>
+		<inertial>
+			<mass value="1.0" />
+			<inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+		</inertial>
+	</link>
+</robot>
